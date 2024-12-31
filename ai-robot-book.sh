@@ -105,6 +105,8 @@ cd ~/airobot_ws/src
 git clone -b 4.0.0 https://github.com/FlexBE/flexbe_behavior_engine
 git clone https://github.com/AI-Robot-Book-Humble/flexbe_webui
 git clone https://github.com/AI-Robot-Book-Humble/chapter7
+cd ~/airobot_ws/src/flexbe_webui
+pip3 install -r requires.txt
 echo "export WORKSPACE_ROOT=~/airobot_ws" >> ~/.bashrc
 
 # 付録B
