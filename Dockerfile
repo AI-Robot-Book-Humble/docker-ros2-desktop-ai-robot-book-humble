@@ -46,6 +46,7 @@ RUN apt-get update && \
         bash-completion tzdata terminator \
         dos2unix \
         apt-utils \
+        nvtop \
         language-pack-ja fonts-takao fcitx-mozc dbus-x11 && \
     apt-get autoclean && \
     apt-get autoremove && \
