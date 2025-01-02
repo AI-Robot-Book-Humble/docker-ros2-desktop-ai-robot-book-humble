@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "entrypoint.sh version 20241231"
+echo "entrypoint.sh version 20250102"
 
 #set -eu
 #set -v
@@ -81,7 +81,7 @@ cat << EOF > $CONF_PATH
 nodaemon=true
 user=root
 [program:vnc]
-command=gosu '$USER' bash '$VNCRUN_PATH'
+command=gosu '$USER' bash --login '$VNCRUN_PATH'
 [program:novnc]
 command=gosu '$USER' bash -c "websockify --web=/usr/lib/novnc 80 localhost:5900"
 EOF
