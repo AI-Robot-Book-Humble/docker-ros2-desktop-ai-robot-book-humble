@@ -32,6 +32,12 @@ https://hub.docker.com/repository/docker/airobotbook/ros2-desktop-ai-robot-book-
 ./arb-run.bash
 ```
 
+GPUを利用する場合
+
+```
+./arb-run.bash --gpus all
+```
+
 ### デスクトップの利用
 
 - ウェブブラウザをVNCビューアにする場合
@@ -60,6 +66,12 @@ arb-pull.bat
 
 ```
 arb-run.bat
+```
+
+GPUを利用する場合
+
+```
+arb-run.bat --gpus all
 ```
 
 ### デスクトップの利用
