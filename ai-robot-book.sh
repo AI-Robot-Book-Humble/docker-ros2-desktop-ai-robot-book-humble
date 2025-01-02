@@ -32,6 +32,9 @@ sudo apt-get upgrade -yq
 mkdir -p ~/airobot_ws/src
 rosdep update
 
+# Whisperはnumpy 1.25.0未満を，YOLOはnumpy 2未満を求めている
+pip3 install 'numpy<1.25.0'
+
 # 第1章
 
 # 第2章
