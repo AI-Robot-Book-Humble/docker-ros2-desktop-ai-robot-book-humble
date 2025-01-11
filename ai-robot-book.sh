@@ -22,8 +22,6 @@ export CMAKE_PREFIX_PATH=
 # https://www.infocircus.jp/2020/06/30/pip-readtimeouterror-certbot-auto/
 export PIP_DEFAULT_TIMEOUT=1000
 
-colcon_build_options='--symlink-install'
-
 sudo apt-get update -q
 
 sudo apt-get upgrade -yq
@@ -34,6 +32,20 @@ rosdep update
 
 # Whisperはnumpy 1.25.0未満を，YOLOはnumpy 2未満を求めている
 pip3 install 'numpy<1.25.0'
+
+# DDS
+sudo apt -y install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
+echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
+
+# colcon
+mkdir ~/.colcon
+cat << __EOF__ > ~/.colcon/defaults.yaml
+{
+    "build": {
+        "symlink-install": true
+    }
+}
+__EOF__
 
 # 第1章
 
@@ -65,8 +77,6 @@ sudo apt-get -y install ros-${ROS_DISTRO}-cartographer-ros
 sudo apt-get -y install ros-${ROS_DISTRO}-dynamixel-sdk
 sudo apt-get -y install ros-${ROS_DISTRO}-xacro
 sudo apt-get -y install ros-${ROS_DISTRO}-ament-cmake-clang-format
-sudo apt -y install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
-echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
 pip3 install matplotlib seaborn
 cd ~/airobot_ws/src/
 # git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
@@ -129,8 +139,8 @@ git clone https://github.com/AI-Robot-Book-Humble/appendixE
 cd ~/airobot_ws
 rosdep install --default-yes --from-paths src --ignore-src
 # pymoveit2のみ別のオプションを指定してビルド
-colcon build --packages-select pymoveit2 $colcon_build_options --cmake-args "-DCMAKE_BUILD_TYPE=Release"
-colcon build --packages-ignore pymoveit2 $colcon_build_options
+colcon build --packages-select pymoveit2 --cmake-args "-DCMAKE_BUILD_TYPE=Release"
+colcon build --packages-ignore pymoveit2
 set +v
 source install/setup.bash
 set -v
@@ -172,19 +182,6 @@ rm -rf $TMPDIR
 echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 echo "source ~/airobot_ws/install/setup.bash" >> ~/.bashrc
-
-# colcon buildに--symlink-installオプションを追加する
-cat >> ~/.bashrc << '__EOF__'
-function colcon () {
-    if [ "$1" == "build" ]
-    then
-        shift
-        command colcon build --symlink-install $*
-    else
-        command colcon $*
-    fi
-}
-__EOF__
 
 set +u
 

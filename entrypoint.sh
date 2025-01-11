@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "entrypoint.sh version 20250102"
+echo "entrypoint.sh version 20250111"
 
 #set -eu
 #set -v
@@ -13,24 +13,6 @@ update-locale LANG=ja_JP.UTF-8
 
 export LANG=ja_JP.UTF-8
 export TZ=Asia/Tokyo
-
-# Create User
-# USER=${USER:-root}
-# HOME=/home/$USER
-# if [ "$USER" != "root" ]; then
-#     echo "* enable custom user: $USER"
-#     useradd --create-home --shell /bin/bash --user-group --groups adm,sudo $USER
-#     echo "$USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-#     if [ -z "$PASSWORD" ]; then
-#         echo "  set default password to \"ubuntu\""
-#         PASSWORD=ubuntu
-#     fi
-#     HOME=/home/$USER
-#     echo "$USER:$PASSWORD" | /usr/sbin/chpasswd 2> /dev/null || echo ""
-#     cp -r /root/{.config,.gtkrc-2.0,.asoundrc} ${HOME} 2>/dev/null
-#     chown -R $USER:$USER ${HOME}
-#     [ -d "/dev/snd" ] && chgrp -R adm /dev/snd
-# fi
 
 # VNC password
 VNC_PASSWORD=${PASSWORD:-ubuntu}
@@ -53,7 +35,7 @@ export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export DefaultIMModule=fcitx
 fcitx
-mate-session
+exec mate-session
 EOF
 chown $USER:$USER $XSTARTUP_PATH
 chmod 755 $XSTARTUP_PATH
@@ -66,12 +48,7 @@ fi
 VNCRUN_PATH=$HOME/.vnc/vnc_run.sh
 cat << EOF > $VNCRUN_PATH
 #!/bin/sh
-
-if [ $(uname -m) = "aarch64" ]; then
-    LD_PRELOAD=/lib/aarch64-linux-gnu/libgcc_s.so.1 vncserver :0 -fg -geometry $RESOLUTION -depth 24 -localhost no
-else
-    vncserver :0 -fg -geometry $RESOLUTION -depth 24 -localhost no
-fi
+vncserver :0 -fg -geometry $RESOLUTION -depth 32 -localhost no
 EOF
 
 # Supervisor
@@ -81,22 +58,23 @@ cat << EOF > $CONF_PATH
 nodaemon=true
 user=root
 [program:vnc]
-command=gosu '$USER' bash --login '$VNCRUN_PATH'
+command=gosu '$USER' bash '$VNCRUN_PATH'
 [program:novnc]
 command=gosu '$USER' bash -c "websockify --web=/usr/lib/novnc 80 localhost:5900"
 EOF
 
-# colcon
-# BASHRC_PATH=$HOME/.bashrc
-# grep -F "source /opt/ros/$ROS_DISTRO/setup.bash" $BASHRC_PATH || echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> $BASHRC_PATH
-# grep -F "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" $BASHRC_PATH || echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> $BASHRC_PATH
-# chown $USER:$USER $BASHRC_PATH
+# PATHに~/binと~/.local/binを追加するコードを~/.bashrcに追加
+BASHRC_PATH=$HOME/.bashrc
+cat << 'EOF' >> $BASHRC_PATH
+if [[ -d "$HOME/bin" && ! "$PATH" =~ "$HOME/.local/bin" ]] ; then
+    PATH="$HOME/bin:$PATH"
+fi
 
-# イメージをビルドしている際にユーザubuntuでrosdepしているのでこれは不要のはず
-# # Fix rosdep permission
-# mkdir -p $HOME/.ros
-# cp -r /root/.ros/rosdep $HOME/.ros/rosdep
-# chown -R $USER:$USER $HOME/.ros
+if [[ -d "$HOME/.local/bin" && ! "$PATH" =~ "$HOME/.local/bin" ]] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+EOF
+chown $USER:$USER $BASHRC_PATH
 
 # Add terminator shortcut
 mkdir -p $HOME/Desktop

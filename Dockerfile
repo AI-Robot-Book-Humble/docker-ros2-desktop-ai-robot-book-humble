@@ -22,16 +22,18 @@ LABEL maintainer="MASUTANI Yasuhiro <ai-robot-book@googlegroups.com>"
 
 SHELL ["/bin/bash", "-c"]
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # Upgrade OS
 RUN apt-get update -q && \
-    DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
+    apt-get upgrade -y && \
     apt-get autoclean && \
     apt-get autoremove && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Ubuntu Mate desktop
 RUN apt-get update -q && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-get install -y \
         ubuntu-mate-desktop && \
     apt-get autoclean && \
     apt-get autoremove && \
@@ -39,7 +41,7 @@ RUN apt-get update -q && \
 
 # Add Package
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-get install -y \
         tigervnc-standalone-server tigervnc-common \
         supervisor wget curl gosu git sudo python3-pip tini \
         build-essential vim sudo lsb-release locales \
@@ -54,6 +56,7 @@ RUN apt-get update && \
 
 # noVNC and Websockify
 RUN git clone https://github.com/AtsushiSaito/noVNC.git -b add_clipboard_support /usr/lib/novnc
+RUN pip install 'numpy<1.25.0'
 RUN pip install git+https://github.com/novnc/websockify.git@v0.10.0
 RUN ln -s /usr/lib/novnc/vnc.html /usr/lib/novnc/index.html
 
@@ -68,7 +71,7 @@ RUN sed -i 's/enabled=1/enabled=0/g' /etc/default/apport
 RUN rm /etc/apt/apt.conf.d/docker-clean
 
 # Install Firefox
-RUN DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:mozillateam/ppa -y && \
+RUN add-apt-repository ppa:mozillateam/ppa -y && \
     echo 'Package: *' > /etc/apt/preferences.d/mozilla-firefox && \
     echo 'Pin: release o=LP-PPA-mozillateam' >> /etc/apt/preferences.d/mozilla-firefox && \
     echo 'Pin-Priority: 1001' >> /etc/apt/preferences.d/mozilla-firefox && \
@@ -99,11 +102,6 @@ RUN gosu ubuntu echo 'export DONT_PROMPT_WSL_INSTALL=1' >> /home/ubuntu/.bashrc 
     gosu ubuntu bash -c "DONT_PROMPT_WSL_INSTALL=1 codium --install-extension ms-ceintl.vscode-language-pack-ja" && \
     gosu ubuntu bash -c "DONT_PROMPT_WSL_INSTALL=1 codium --install-extension ms-python.python"
 
-# RUN gosu ubuntu cp /root/.gtkrc-2.0 /home/ubuntu
-# RUN cp -r /root/.config /home/ubuntu && chown -R ubuntu:ubuntu /home/ubuntu/.config
-# RUN gosu ubuntu cp /root/.asoundrc /home/ubuntu
-# RUN [ -d "/dev/snd" ] && chgrp -R adm /dev/snd
-
 # Install ROS
 ENV ROS_DISTRO humble
 # desktop or ros-base
@@ -122,18 +120,11 @@ RUN apt-get update -q && \
     rosdep init && \
     rm -rf /var/lib/apt/lists/*
 
-# RUN rosdep update
-
-# Install simulation package only on amd64
-# Not ready for arm64 for now (July 28th, 2020)
-# https://github.com/Tiryoh/docker-ros2-desktop-vnc/pull/56#issuecomment-1196359860
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-    apt-get update -q && \
+RUN apt-get update -q && \
     apt-get install -y \
     ros-${ROS_DISTRO}-gazebo-ros-pkgs \
     ros-${ROS_DISTRO}-ros-ign && \
-    rm -rf /var/lib/apt/lists/*; \
-    fi
+    rm -rf /var/lib/apt/lists/*
 
 COPY ./ai-robot-book.sh /ai-robot-book.sh
 RUN dos2unix /ai-robot-book.sh
