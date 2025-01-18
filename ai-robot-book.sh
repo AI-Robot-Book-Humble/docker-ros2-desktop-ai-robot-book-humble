@@ -29,6 +29,7 @@ sudo apt-get upgrade -yq
 # 前処理
 mkdir -p ~/airobot_ws/src
 rosdep update
+# pip3 install --upgrade pip setuptools
 
 # Whisperはnumpy 1.25.0未満を，YOLOはnumpy 2未満を求めている
 pip3 install 'numpy<1.25.0'
@@ -37,7 +38,7 @@ pip3 install 'numpy<1.25.0'
 sudo apt -y install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
 
-# colcon
+# colcon buildでデフォルトで--symlink-installを付ける設定
 mkdir ~/.colcon
 cat << __EOF__ > ~/.colcon/defaults.yaml
 {
@@ -79,9 +80,7 @@ sudo apt-get -y install ros-${ROS_DISTRO}-xacro
 sudo apt-get -y install ros-${ROS_DISTRO}-ament-cmake-clang-format
 pip3 install matplotlib seaborn
 cd ~/airobot_ws/src/
-# git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3.git
 git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
-# git clone -b humble-devel https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
 git clone https://github.com/AI-Robot-Book-Humble/chapter4.git
 git clone https://github.com/AI-Robot-Book-Humble/turtlebot3_happy_mini.git
 echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
@@ -93,7 +92,15 @@ pip3 install opencv-contrib-python
 sudo apt-get -y install ros-${ROS_DISTRO}-vision-opencv
 sudo apt-get -y install ros-${ROS_DISTRO}-usb-cam
 sudo apt-get -y install ros-${ROS_DISTRO}-realsense2-camera
+# # ホームディレクトリにultralyticsをソースからインストール
+# cd
+# git clone https://github.com/ultralytics/ultralytics
+# cd ultralytics
+# pip3 install -e .
+# pip3でultralyticsをインストール
 pip3 install ultralytics
+# ultralytics の依存でインストールされるをopencv_pythonアンインストール
+pip3 uninstall -y opencv_python
 cd ~/airobot_ws/src
 git clone https://github.com/JMU-ROBOTICS-VIVA/ros2_aruco
 git clone https://github.com/AI-Robot-Book-Humble/chapter5

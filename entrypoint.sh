@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "entrypoint.sh version 20250111"
+echo "entrypoint.sh version 20250118"
 
 #set -eu
 #set -v
