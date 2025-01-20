@@ -98,9 +98,9 @@ RUN useradd --create-home --home-dir /home/ubuntu --shell /bin/bash --user-group
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo 'Defaults env_keep="http_proxy hhtps_proxy no_proxy"' >> /etc/sudoers
 
-RUN gosu ubuntu echo 'export DONT_PROMPT_WSL_INSTALL=1' >> /home/ubuntu/.bashrc && \
-    gosu ubuntu bash -c "DONT_PROMPT_WSL_INSTALL=1 codium --install-extension ms-ceintl.vscode-language-pack-ja" && \
-    gosu ubuntu bash -c "DONT_PROMPT_WSL_INSTALL=1 codium --install-extension ms-python.python"
+RUN gosu ubuntu bash -c 'echo "export DONT_PROMPT_WSL_INSTALL=1" >> /home/ubuntu/.bashrc' && \
+    gosu ubuntu bash -c 'DONT_PROMPT_WSL_INSTALL=1 codium --install-extension ms-ceintl.vscode-language-pack-ja' && \
+    gosu ubuntu bash -c 'DONT_PROMPT_WSL_INSTALL=1 codium --install-extension ms-python.python'
 
 # Install ROS
 ENV ROS_DISTRO humble

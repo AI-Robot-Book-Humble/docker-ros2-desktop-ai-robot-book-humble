@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "entrypoint.sh version 20250118"
+echo "entrypoint.sh version 20250120"
 
 #set -eu
 #set -v
@@ -12,6 +12,7 @@ done
 update-locale LANG=ja_JP.UTF-8
 
 export LANG=ja_JP.UTF-8
+export LANGUAGE=$LANG
 export TZ=Asia/Tokyo
 
 # VNC password
