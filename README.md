@@ -1,7 +1,7 @@
-# 「ROS2とPythonで作って学ぶAIロボット入門」の教材一式を提供するDockerイメージの作成（Humble版）
+# 「ROS 2とPythonで作って学ぶAIロボット入門 改訂第2版」の教材一式を提供するDockerイメージの作成
 
 ## 概要
-- [「ROS2とPythonで作って学ぶAIロボット入門（Humble版）」](https://github.com/AI-Robot-Book-HUmble/)に必要なライブラリ，パッケージ，サンプルプログラムを全て含む．
+- [「ROS 2とPythonで作って学ぶAIロボット入門 改訂第2版」](https://www.kspub.co.jp/book/detail/5386163.html)に必要なライブラリ，パッケージ，サンプルプログラムを全て含む．
 - Daisuke Sato: Dockerfiles to provide HTML5 VNC interface to access Ubuntu Desktop + ROS 2, [GitHub tiryoh/ros2-desktop-vnc](https://github.com/Tiryoh/docker-ros2-desktop-vnc) のHumble用を基にしている．
 - VSCodium
 - 日本語環境
